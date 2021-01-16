@@ -1,35 +1,57 @@
 const { ApolloServer, gql } = require('apollo-server-lambda')
+const faunadb = require('faunadb'),
+  q = faunadb.query;
+const shortid = require('shortid');
 
 const typeDefs = gql`
   type Query {
-    hello: String
-    allAuthors: [Author!]
-    author(id: Int!): Author
-    authorByName(name: String!): Author
+    getVCard: [vCard]
   }
-  type Author {
+  type vCard {
     id: ID!
-    name: String!
-    married: Boolean!
+    c1: String!
+    c2: String!
+    c3: String!
+    rec: String!
+    sender: String!
+    msg: String!
+    link: String!
+  }
+  type Mutation {
+    addVCard(c1: String!, 
+      c2: String!,
+      c3: String!,
+      rec: String!,
+      sender: String!,
+      msg: String!) : vCard
   }
 `
 
-const authors = [
-  { id: 1, name: 'Terry Pratchett', married: false },
-  { id: 2, name: 'Stephen King', married: true },
-  { id: 3, name: 'JK Rowling', married: false },
-]
-
 const resolvers = {
   Query: {
-    hello: () => 'Hello, world!',
-    allAuthors: () => authors,
-    author: () => {},
-    authorByName: (root, args) => {
-      console.log('hihhihi', args.name)
-      return authors.find((author) => author.name === args.name) || 'NOTFOUND'
-    },
+    getVCard: (root, args, context) => {
+      return [{}]
+    }
   },
+  Mutation: {
+    addVCard: async (_, { c1, c2, c3, rec, msg, sender }) => {
+      var adminClient = new faunadb.Client({ secret: 'fnAD3k5_3EACB6gCBsRr3R3wpEKT_uo1PpVFackm' });
+
+      console.log(c1, c2, c3, rec, msg, sender)
+      const result = await adminClient.query(
+        q.Create(
+          q.Collection('vCards'),
+          {
+            data: {
+              c1, c2, c3, rec, msg, sender,
+              link: shortid.generate()
+            }
+          },
+        )
+      )
+      return result.data.data
+    }
+  }
 }
 
 const server = new ApolloServer({
@@ -37,6 +59,4 @@ const server = new ApolloServer({
   resolvers,
 })
 
-const handler = server.createHandler()
-
-module.exports = { handler }
+exports.handler = server.createHandler()
