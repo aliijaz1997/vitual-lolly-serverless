@@ -35,12 +35,12 @@ const resolvers = {
   },
   Mutation: {
     addVCard: async (_, { c1, c2, c3, rec, msg, sender }) => {
-      var adminClient = new faunadb.Client({ secret: 'fnAD3k5_3EACB6gCBsRr3R3wpEKT_uo1PpVFackm' });
+      var adminClient = new faunadb.Client({ secret: process.env.FaunaDB_Secret_Token });
 
       console.log(c1, c2, c3, rec, msg, sender)
       const result = await adminClient.query(
         q.Create(
-          q.Collection('vCards'),
+          q.Collection('lollycollection'),
           {
             data: {
               c1, c2, c3, rec, msg, sender,
