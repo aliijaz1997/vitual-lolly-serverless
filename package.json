@@ -17,13 +17,15 @@
   "license": "0BSD",
   "dependencies": {
     "@apollo/client": "^3.3.7",
-    "apollo-server-lambda": "^2.19.2",
-    "dotenv": "^8.2.0",
-    "faunadb": "^4.0.0",
-    "gatsby": "^2.26.1",
-    "graphql": "^14.7.0",
+    "faunadb": "^4.0.3",
+    "gatsby": "^2.32.2",
+    "gatsby-source-graphql": "^2.14.0",
+    "netlify-cli": "^3.5.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "@types/shortid": "^0.0.29"
   }
 }
